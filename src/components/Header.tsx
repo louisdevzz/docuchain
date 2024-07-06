@@ -37,7 +37,7 @@ export default function Header() {
         chainConfig,
         uiConfig: {
           appName: "UniCert On-Chain",
-          mode: "dark", // light, dark or auto
+          mode: "light", // light, dark or auto
           loginMethodsOrder: ["apple", "google", "twitter"],
           logoLight: "https://web3auth.io/images/web3auth-logo.svg",
           logoDark: "https://web3auth.io/images/web3auth-logo---Dark.svg",
