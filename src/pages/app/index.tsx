@@ -7,6 +7,7 @@ import {
     PaymasterMode,
 } from "@biconomy/account";
 import { connectWallet } from "@/utils/smartWallet";
+import { MintNFT } from "@/utils/SDK";
 
 
 export default function Apps(){
@@ -40,7 +41,7 @@ export default function Apps(){
     }
 
     const Sumbit = async()=>{
-        if(file&&name&&school&&year){
+        if(file&&name&&year){
             try {
                 const toastId = toast("Submit Pending",{autoClose:false});
                 const data = new FormData();
@@ -58,44 +59,31 @@ export default function Apps(){
                     body: data,
                 });
                 const { IpfsHash } = await res.json();
-                const datas = JSON.stringify({
-                    pinataContent: {
-                        name: name,
-                        school: school,
-                        year: year,
-                        image: "https://gateway.pinata.cloud/ipfs/"+IpfsHash,
-                    },
-                    pinataMetadata: {
-                        name: "metadata.json"
-                    }
+                console.log("IpfsHash",IpfsHash)
+                // toast.update(toastId, {
+                //     render: "Upload Information Successfull",
+                //     type: "success",
+                // });
+                const transaction = await MintNFT({
+                    smartAccountAddress: smartAccountAddress as string,
+                    ipfs_cid: IpfsHash
                 })
-                const rs = await fetch("https://api.pinata.cloud/pinning/pinJSONToIPFS", {
-                    method: "POST",
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${process.env.JWT_PINATA_CLOUD}`,
-                    },
-                    body: datas,
-                });
-                const result = await rs.json();
-                console.log("cid",result.IpfsHash)
                 toast.update(toastId, {
-                    render: "Upload Information Successfull",
+                    render: "Mint NFT successfull",
                     type: "success",
-                    autoClose: 1000,
                 });
-                const contractAddress = "0x53191dB16a946E5aC8205Dd1a49528730b92b5c0";
+                const contractAddress = "0x9d69b7d8A1B9A1Be84c59ef2866820De334E76FD";
                 const provider = new ethers.providers.JsonRpcProvider(
                     "https://eth-sepolia.public.blastapi.io"
                 );
-                
+
                 const contractInstance = new ethers.Contract(
                     contractAddress as string,
                     ABI,
                     provider
                 );
-                const minTx = await contractInstance.populateTransaction.safeMint(smartAccountAddress,`https://gateway.pinata.cloud/ipfs/${result.IpfsHash}`);
-                console.log("Mint Tx Data", minTx.data);
+                const minTx = await contractInstance.populateTransaction.registerKYC(smartAccountAddress,name,IpfsHash,year,transaction,true);
+                console.log("Mint Tx", minTx.data);
                 const tx1 = {
                     to: contractAddress,
                     data: minTx.data,
@@ -122,13 +110,6 @@ export default function Apps(){
                     });
                     console.log("transactionHash",transactionHash);
                 }
-                //setCid(IpfsHash);
-                
-                // toast.update(toastId, {
-                //     render: "Submit Successful",
-                //     type: "success",
-                //     autoClose: 2000,
-                // });
                 
             } catch (e) {
                 console.log(e);
@@ -141,53 +122,65 @@ export default function Apps(){
     }
     return(
         <div className="mt-10 flex flex-row w-full px-6 gap-10 justify-between items-center">
-            <section className="container h-[500px] w-full items-center py-24">
-                <div className="bg-white rounded-lg shadow-md overflow-hidden items-center">
-                    {image
-                    ?<div>
-                        <img src={image} width={40} height={80} className="w-full"/>
-                    </div>
-                    :<div className="px-4 py-6 flex items-center">
-                        <div id="image-preview" className="p-6 mb-4 bg-gray-100 flex border-dashed border-2 border-gray-400 rounded-lg items-center mx-auto text-center cursor-pointer">
-                            <input onChange={uploadFile} id="upload" type="file" className="hidden" accept="image/*" />
-                            <label htmlFor="upload" className="cursor-pointer">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-8 h-8 text-gray-700 mx-auto mb-4">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-                            </svg>
-                            <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-700">Upload picture</h5>
-                            <p className="font-normal text-sm text-gray-400 md:px-6">Choose photo size should be less than <b className="text-gray-600">2mb</b></p>
-                            <p className="font-normal text-sm text-gray-400 md:px-6">and should be in <b className="text-gray-600">JPG, PNG, or GIF</b> format.</p>
-                            <span id="filename" className="text-gray-500 bg-gray-200 z-50"></span>
-                            </label>
+            <div className="px-10 w-full">
+                <h1 className="font-semibold text-2xl">Upload Certificate</h1>
+                <div className="flex flex-col md:flex-row w-full justify-between ">
+                    <div className="flex flex-col gap-2 mt-10">
+                        <div className="">
+                            <p>Image for certificate</p>
+                            <div className="flex cursor-pointer items-center space-x-6 border border-gray-300 rounded-lg mt-2 w-[400px] focus:border-black">
+                                <label className="block cursor-pointer">
+                                    <input type="file" className="block w-full text-sm text-slate-500 file:cursor-pointer
+                                        file:mr-4 file:py-2 file:px-4
+                                        file:border-0
+                                        file:rounded-l-lg
+                                        file:text-sm file:font-semibold
+                                        file:bg-gray-50 file:text-black
+                                        hover:file:bg-gray-100
+                                    "/>
+                                </label>
+                            </div>
+                        </div>
+                        <div className="mt-2 flex flex-col gap-2">
+                            <label htmlFor="nameStudent">Full Name student</label>
+                            <input name="nameStudent" type="text"  className="border border-gray-300 px-3 py-2 rounded-lg"/>
+                        </div>
+                        <div className="mt-2 flex flex-col gap-2">
+                            <label htmlFor="nameStudent">Birthday student</label>
+                            <input name="nameStudent" type="text"  className="border border-gray-300 px-3 py-2 rounded-lg"/>
+                        </div>
+                        <div className="mt-2 flex flex-col gap-2">
+                            <label htmlFor="nameStudent">ID of student</label>
+                            <input name="nameStudent" type="text"  className="border border-gray-300 px-3 py-2 rounded-lg"/>
+                        </div>
+                        <div className="mt-2 flex flex-col gap-2">
+                            <label htmlFor="nameStudent">Major of student</label>
+                            <input name="nameStudent" type="text"  className="border border-gray-300 px-3 py-2 rounded-lg"/>
+                        </div>
+                        <div className="mt-2 flex flex-col gap-2">
+                            <label htmlFor="nameStudent">Gradution year</label>
+                            <input name="nameStudent" type="text"  className="border border-gray-300 px-3 py-2 rounded-lg"/>
+                        </div>
+                        <div className="mt-2 flex justify-center">
+                            <button className="md:w-[250px] px-4 py-2 bg-black text-[#fff] rounded-lg hover:bg-opacity-75">
+                                <span className="font-semibold">Upload</span>
+                            </button>
                         </div>
                     </div>
-                    }
-                </div>
-            </section>
-            <div className="w-full mt-20 p-6 bg-white border rounded-lg shadow-lg">
-                <h2 className="text-2xl font-bold mb-6">Information </h2>
-                <div className="mb-4">
-                    <label className="block text-gray-700 font-bold mb-2" htmlFor="name">
-                Name:
-                </label>
-                    <input onChange={(e)=>setName(e.target.value)} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="name" type="text" placeholder="Enter your name"/>
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 font-bold mb-2" htmlFor="school">
-                School:
-                </label>
-                    <input onChange={(e)=>setSchool(e.target.value)} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="school" type="text" placeholder="Enter your school"/>
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 font-bold mb-2" htmlFor="year">
-                Year:
-                </label>
-                    <input onChange={(e)=>setYear(e.target.value)} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="year"  placeholder="Enter your year"/>
-                </div>
-                <div className="flex flex-end justify-end">
-                    <button onClick={Sumbit} className="w-40 bg-black hover:bg-opacity-75 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
-                        Submit
-                    </button>
+                    <div className="flex flex-col w-[600px] h-[400px] justify-center items-center mt-20">
+                        <p className="text-center text-2xl font-semibold">Your QR Code</p>
+                        <div className="border border-gray-300 p-4 mt-10 rounded-md shadow-lg">
+                            <img width={200} className="w-[400px] justify-center h-[400px] rounded-md" src="https://www.qrgpt.io/_next/image?url=https%3A%2F%2Fg4yqcv8qdhf169fk.public.blob.vercel-storage.com%2F6BhfNzx-TmxVWNhp6UBEOT11nZX2cjYZLx6m6E.png&w=640&q=75" alt="qr_code" />
+                        </div>
+                        <div className="flex flex-row gap-10 mt-5">
+                            <button className="px-4 py-2 bg-black text-[#fff] rounded-md hover:bg-opacity-75">
+                                <span>Download</span>
+                            </button>
+                            <button className="px-4 py-2 border border-gray-300 rounded-md hover:bg-opacity-75">
+                                <span>Share</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

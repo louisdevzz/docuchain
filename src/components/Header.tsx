@@ -27,45 +27,45 @@ export default function Header() {
         blockExplorer: "https://sepolia.etherscan.io/",
         ticker: "ETH",
         tickerName: "Ethereum",
-      }
-
-      //Creating web3auth instance
-      const web3auth = new Web3Auth({
+        }
+    
+        //Creating web3auth instance
+        const web3auth = new Web3Auth({
         clientId:
-          "BF7VNWZp3xcReMTWGjVyaDIaroawluipOGC9Kfrhq1FgNK_cx1G1Dhxnt3skEH6ZYrODKXhUGJEA0rVCAXbublo", // Get your Client ID from the Web3Auth Dashboard https://dashboard.web3auth.io/
+            "BF7VNWZp3xcReMTWGjVyaDIaroawluipOGC9Kfrhq1FgNK_cx1G1Dhxnt3skEH6ZYrODKXhUGJEA0rVCAXbublo", // Get your Client ID from the Web3Auth Dashboard https://dashboard.web3auth.io/
         web3AuthNetwork: "sapphire_devnet", // Web3Auth Network
         chainConfig,
         uiConfig: {
-          appName: "UniCert On-Chain",
-          mode: "light", // light, dark or auto
-          loginMethodsOrder: ["apple", "google", "twitter"],
-          logoLight: "https://web3auth.io/images/web3auth-logo.svg",
-          logoDark: "https://web3auth.io/images/web3auth-logo---Dark.svg",
-          defaultLanguage: "en", // en, de, ja, ko, zh, es, fr, pt, nl
-          loginGridCol: 3,
-          primaryButton: "socialLogin", // "externalLogin" | "socialLogin" | "emailLogin"
+            appName: "UniCert On-Chain",
+            mode: "light", // light, dark or auto
+            loginMethodsOrder: ["apple", "google", "twitter"],
+            logoLight: "https://web3auth.io/images/web3auth-logo.svg",
+            logoDark: "https://web3auth.io/images/web3auth-logo---Dark.svg",
+            defaultLanguage: "en", // en, de, ja, ko, zh, es, fr, pt, nl
+            loginGridCol: 3,
+            primaryButton: "socialLogin", // "externalLogin" | "socialLogin" | "emailLogin"
         },
-      });
-
-      await web3auth.initModal();
-      const web3authProvider = await web3auth.connect();
-      const ethersProvider = new ethers.providers.Web3Provider(
+        });
+    
+        await web3auth.initModal();
+        const web3authProvider = await web3auth.connect();
+        const ethersProvider = new ethers.providers.Web3Provider(
         web3authProvider as any
-      );
-      const web3AuthSigner = ethersProvider.getSigner();
-
-      const config = {
+        );
+        const web3AuthSigner = ethersProvider.getSigner();
+    
+        const config = {
         biconomyPaymasterApiKey: "pg90HOfS1.2b0110e8-eed6-41b3-a3c6-efc4742f148c",
         bundlerUrl: `https://bundler.biconomy.io/api/v2/11155111/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44`, // <-- Read about this at https://docs.biconomy.io/dashboard#bundler-url
-      };
-
-      const smartWallet = await createSmartAccountClient({
-        signer: web3AuthSigner,
-        biconomyPaymasterApiKey: config.biconomyPaymasterApiKey,
-        bundlerUrl: config.bundlerUrl,
-        rpcUrl: "https://eth-sepolia.public.blastapi.io",
-        chainId: 11155111,
-      });
+        };
+    
+        const smartWallet = await createSmartAccountClient({
+            signer: web3AuthSigner,
+            biconomyPaymasterApiKey: config.biconomyPaymasterApiKey,
+            bundlerUrl: config.bundlerUrl,
+            rpcUrl: "https://eth-sepolia.public.blastapi.io",
+            chainId: 11155111,
+        });
 
       console.log("Biconomy Smart Account", smartWallet);
       //localStorage.setItem("smartWallet",JSON.stringify(smartWallet));
@@ -87,18 +87,30 @@ export default function Header() {
 
   return (
     <div className="hidden md:flex h-20 justify-center mx-auto border-b border-gray-200">
-      <div className="w-full flex max-w-screen-xl">
+      <div className="w-full flex max-w-screen-xl md:px-5">
         <div className="flex flex-row w-full justify-between items-center">
             <div>
-              <Link href={""}>
-                Logo
+              <Link href={"/"}>
+                <span className="font-semibold text-3xl">BlockCertify</span>
               </Link>
             </div>
-            <ul className="flex flex-row justify-between items-center gap-3">
-              <li>a</li>
-              <li>b</li>
-              <li>c</li>
-              <li>d</li>
+            <ul className="flex flex-row justify-between items-center gap-10">
+              <li>
+                <Link href={"/"}>
+                  <span>Home</span>
+                </Link>
+              </li>
+              <li>
+                <Link href={"/app"}>
+                  <span>Apps</span>
+                </Link>
+              </li>
+              <li>
+                <Link href={"/verify"}>
+                  <span>Verify</span>
+                </Link>
+              </li>
+              <li>Contact</li>
             </ul>
             <div>
               {smartAccountAddress
