@@ -91,7 +91,8 @@ export default function Header() {
       <div className="w-full flex max-w-screen-xl md:px-5 px-3 py-2">
         <div className="flex flex-row w-full justify-between items-center">
             <div>
-              <Link href={"/"}>
+              <Link href={"/"} className="flex flex-row gap-1 items-center">
+                <img width={20} height={20} className="md:w-12 md:h-12 h-10 w-10" src="/assets/logo.png" alt="logo" />
                 <span className="font-semibold text-2xl md:text-3xl">BlockCertify</span>
               </Link>
             </div>
