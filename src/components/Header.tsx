@@ -12,6 +12,7 @@ export default function Header() {
     null
   );
   const [isShow,setIsShow] = useState<boolean>(false);
+  const [isHidden,setIsHidden] = useState<boolean>(false);
 
   useEffect(()=>{
     setSmartAccountAddress(localStorage.getItem("smartAccountAddress"))
@@ -86,15 +87,15 @@ export default function Header() {
   }
 
   return (
-    <div className="hidden md:flex h-20 justify-center mx-auto border-b border-gray-200">
-      <div className="w-full flex max-w-screen-xl md:px-5">
+    <div className=" md:flex md:h-20  justify-center mx-auto border-b border-gray-200">
+      <div className="w-full flex max-w-screen-xl md:px-5 px-3 py-2">
         <div className="flex flex-row w-full justify-between items-center">
             <div>
               <Link href={"/"}>
-                <span className="font-semibold text-3xl">BlockCertify</span>
+                <span className="font-semibold text-2xl md:text-3xl">BlockCertify</span>
               </Link>
             </div>
-            <ul className="flex flex-row justify-between items-center gap-10">
+            <ul className="hidden md:flex flex-row justify-between items-center gap-10">
               <li>
                 <Link href={"/"}>
                   <span>Home</span>
@@ -112,12 +113,17 @@ export default function Header() {
               </li>
               <li>Contact</li>
             </ul>
-            <div>
+            
+            <div className="flex flex-row gap-5">
+              <button onClick={()=>setIsHidden(true)}>
+                <img width={26} className="block md:hidden" src="/assets/menu.svg" alt="menu" />
+              </button>
               {smartAccountAddress
               ?
-                <div className="relative">
-                  <span onClick={()=>setIsShow((prv)=>!prv)} className="cursor-pointer bg-black hover:bg-opacity-80 text-white font-semibold px-4 py-2 h-12 rounded-lg">{truncate(smartAccountAddress)}</span>
-                  <div className={`${isShow?"visible":"invisible"} absolute px-2 py-3 top-10 shadow-md rounded-md border border-gray-100 w-40 left-0 bg-white`}>
+                <div className="hidden md:block relative">
+                  <span onClick={()=>setIsShow((prv)=>!prv)} className="cursor-pointer bg-black hover:bg-opacity-80 text-white font-semibold px-4 py-2 h-12 md:text-base text-[0.7rem] rounded-lg">{truncate(smartAccountAddress)}</span>
+                  
+                  <div className={`${isShow?"visible":"invisible"} absolute px-2 py-3 top-10 shadow-md rounded-md border border-gray-100 w-40 right-0 md:left-0  bg-white`}>
                     <div className="mt-2 flex flex-col gap-3">
                       <button className="hover:border-r-2 hover:bg-gray-100 py-1 bg-opacity-90 border-gray-200 pr-16 pl-2">Log out</button>
                       <button className="hover:border-r-2 hover:bg-gray-100 py-1 bg-opacity-90 border-gray-200 pr-16 pl-2">Profile</button>
@@ -130,6 +136,39 @@ export default function Header() {
                 </button>
               }
             </div>
+            {isHidden&&(
+              <div className="fixed w-full z-50 bg-white h-screen top-0 left-0 px-3 py-2 transition-all delay-300">
+                <div className="flex justify-end mr-2 -mt-2">
+                  <button onClick={()=>setIsHidden(false)}>
+                    <img width={35} src="/assets/close.svg" alt="close" />
+                  </button>
+                </div>
+                <div className="mt-10 flex flex-row justify-center w-full">
+                  <div className="flex flex-col gap-3 text-center items-center">
+                    <Link href={"/"} onClick={()=>setIsHidden(false)}>
+                      <span className="text-lg">Home</span>
+                    </Link>
+                    <Link href={"/app"} onClick={()=>setIsHidden(false)}>
+                      <span className="text-lg">Upload</span>
+                    </Link>
+                    <Link href={"/verify"} onClick={()=>setIsHidden(false)}>
+                      <span className="text-lg">Verify</span>
+                    </Link>
+                    <Link href={"#"} onClick={()=>setIsHidden(false)}>
+                      <span className="text-lg">Contact</span>
+                    </Link>
+                    <div className="border-t border-gray-300 w-[260px]"/>
+                    <span className="text-lg ">{truncate(smartAccountAddress as string)}</span>
+                    <Link href={"#"} onClick={()=>setIsHidden(false)}>
+                      <span className="text-lg">Profile</span>
+                    </Link>
+                    <button onClick={()=>setIsHidden(false)}>
+                      <span className="text-lg">Logout</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
         </div>
       </div>
     </div>

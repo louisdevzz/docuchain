@@ -1,4 +1,4 @@
-//0x9d69b7d8A1B9A1Be84c59ef2866820De334E76FD
+//0xf0873E7C54212f0c94755A103aDb2139a6786314
 export const ABI = [
 	{
 		"inputs": [],
@@ -11,8 +11,40 @@ export const ABI = [
 			{
 				"indexed": false,
 				"internalType": "address",
-				"name": "stdAddress",
+				"name": "ethAdmin",
 				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			}
+		],
+		"name": "admAdd",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "ethAdmin",
+				"type": "address"
+			}
+		],
+		"name": "admRemove",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "idStudent",
+				"type": "string"
 			},
 			{
 				"indexed": false,
@@ -25,76 +57,13 @@ export const ABI = [
 		"type": "event"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_stdAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "string",
-				"name": "_nameStudent",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_urlPhoto",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_year",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_hashNFT",
-				"type": "string"
-			},
-			{
-				"internalType": "bool",
-				"name": "_status",
-				"type": "bool"
-			}
-		],
-		"name": "registerKYC",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_stdAddress",
-				"type": "address"
-			}
-		],
-		"name": "removeKYC",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
 				"indexed": false,
-				"internalType": "address",
-				"name": "stdAddress",
-				"type": "address"
+				"internalType": "string",
+				"name": "idStudent",
+				"type": "string"
 			},
 			{
 				"indexed": false,
@@ -111,9 +80,9 @@ export const ABI = [
 		"inputs": [
 			{
 				"indexed": false,
-				"internalType": "address",
-				"name": "stdAddress",
-				"type": "address"
+				"internalType": "string",
+				"name": "idStudent",
+				"type": "string"
 			},
 			{
 				"indexed": false,
@@ -129,36 +98,16 @@ export const ABI = [
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "_stdAddress",
+				"name": "_ethAdmin",
 				"type": "address"
 			},
 			{
 				"internalType": "string",
-				"name": "_nameStudent",
+				"name": "_name",
 				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_urlPhoto",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_year",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_hashNFT",
-				"type": "string"
-			},
-			{
-				"internalType": "bool",
-				"name": "_status",
-				"type": "bool"
 			}
 		],
-		"name": "updateKYC",
+		"name": "addAdmin",
 		"outputs": [
 			{
 				"internalType": "bool",
@@ -183,6 +132,162 @@ export const ABI = [
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_idStudent",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_nameStudent",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_urlCertificate",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_birthday",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_major",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_gradutionYear",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_hashNFT",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_nameUniversity",
+				"type": "string"
+			},
+			{
+				"internalType": "bool",
+				"name": "_status",
+				"type": "bool"
+			}
+		],
+		"name": "registerKYC",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_ethAdmin",
+				"type": "address"
+			}
+		],
+		"name": "removeAdmin",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_idStudent",
+				"type": "string"
+			}
+		],
+		"name": "removeKYC",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_idStudent",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_nameStudent",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_urlCertificate",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_birthday",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_major",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_gradutionYear",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_hashNFT",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_nameUniversity",
+				"type": "string"
+			},
+			{
+				"internalType": "bool",
+				"name": "_status",
+				"type": "bool"
+			}
+		],
+		"name": "updateKYC",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "validAdmin",
 		"outputs": [
@@ -197,7 +302,7 @@ export const ABI = [
 	},
 	{
 		"inputs": [],
-		"name": "validStd",
+		"name": "validAdminNew",
 		"outputs": [
 			{
 				"internalType": "bool",
@@ -211,9 +316,9 @@ export const ABI = [
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "_stdAddress",
-				"type": "address"
+				"internalType": "string",
+				"name": "_idStudent",
+				"type": "string"
 			}
 		],
 		"name": "viewKYC",
@@ -242,51 +347,16 @@ export const ABI = [
 				"internalType": "string",
 				"name": "",
 				"type": "string"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "viewYourKYC",
-		"outputs": [
+			},
 			{
-				"components": [
-					{
-						"internalType": "address",
-						"name": "studentAdress",
-						"type": "address"
-					},
-					{
-						"internalType": "string",
-						"name": "nameStudent",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "urlPhoto",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "year",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "hashNFT",
-						"type": "string"
-					},
-					{
-						"internalType": "bool",
-						"name": "status",
-						"type": "bool"
-					}
-				],
-				"internalType": "struct Kyc.Student",
+				"internalType": "string",
 				"name": "",
-				"type": "tuple"
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
 			}
 		],
 		"stateMutability": "view",

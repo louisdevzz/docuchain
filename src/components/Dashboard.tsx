@@ -52,14 +52,14 @@ export default function Dashboard(){
         <div className="flex flex-col">
             <div className="flex flex-col gap-3 px-5 flex-wrap mt-10">
                 <div className="mt-2 flex justify-center items-center text-center">
-                    <div className="w-3/4">
-                        <h1 className="text-5xl text-center leading-[70px] font-semibold tracking-wider">Transparent verification of university diplomas in a seconds</h1>
+                    <div className="md:w-3/4">
+                        <h1 className="text-2xl md:text-5xl text-center md:leading-[70px] font-semibold tracking-wider">Transparent verification of university diplomas in a seconds</h1>
                         <div className="w-full">
                             <div className="text-center flex justify-center">
-                                <p className="font-light mt-5 text-lg text-[#000000b9] w-1/2">BlockCertify simplifies the process of verifying university diplomas using blockchain technology</p>
+                                <p className="font-light mt-5 text-sm md:text-lg text-[#000000b9] md:w-1/2">BlockCertify simplifies the process of verifying university diplomas using blockchain technology</p>
                             </div>
                         </div>
-                        <div className="mt-5 flex flex-row gap-10 justify-center items-center">
+                        <div className="mt-5 flex flex-col md:flex-row gap-5 md:gap-10 justify-center items-center">
                             <Link href={"/app"} className="bg-black text-[#fff] px-5 py-2 rounded-lg shadow-sm hover:bg-opacity-75">
                                 <span>Upload Certificate</span>
                             </Link>
@@ -101,8 +101,8 @@ export default function Dashboard(){
                     </CardContainer>
                 </div>
                     ):(
-                        <div className="w-full h-[500px]">
-
+                        <div className="w-full mt-10 flex justify-center">
+                            <img width={200} className="w-full h-full md:w-[500px] md:h-[500px] grayscale" src="https://resistant.ai/hubfs/Document.svg" alt="" />
                         </div>
                     )
                 }
@@ -110,8 +110,8 @@ export default function Dashboard(){
             <div className="mt-20 border-t border-gray-200">
                 <div className="p-10 flex justify-center items-center">
                     <div className="flex flex-col justify-center items-center ">
-                        <h2 className="text-3xl font-semibold tracking-wider">BlockCertify is Proudly Open Source</h2>
-                        <p className="mt-1 text-[#000000a6]">Our source code is available on GitHub.</p>
+                        <h2 className="md:text-3xl text-2xl text-center font-semibold tracking-wider">BlockCertify is Proudly Open Source</h2>
+                        <p className="mt-1 text-[#000000a6] text-sm md:text-base">Our source code is available on GitHub.</p>
                         <Link href={"https://github.com/louisdevzz/UniCert"} className="mt-8 bg-black text-[#fff] flex flex-row gap-3 px-5 py-2 items-center rounded-lg">
                             <FaGithub />
                             <span>Star on Github</span>
