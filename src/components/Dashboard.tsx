@@ -78,7 +78,7 @@ export default function Dashboard(){
                     <div className="flex flex-col justify-center items-center ">
                         <h2 className="md:text-3xl text-2xl text-center font-semibold tracking-wider">BlockCertify is Proudly Open Source</h2>
                         <p className="mt-1 text-[#000000a6] text-sm md:text-base">Our source code is available on GitHub.</p>
-                        <Link href={"https://github.com/louisdevzz/UniCert"} className="mt-8 bg-black text-[#fff] flex flex-row gap-3 px-5 py-2 items-center rounded-lg">
+                        <Link target="_blank" href={"https://github.com/louisdevzz/UniCert"} className="mt-8 bg-black text-[#fff] flex flex-row gap-3 px-5 py-2 items-center rounded-lg">
                             <FaGithub />
                             <span>Star on Github</span>
                         </Link>
