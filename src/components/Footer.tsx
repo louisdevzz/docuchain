@@ -5,7 +5,7 @@ const Footer = () => {
                 <div className="py-6 ">
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                         <div className="mb-12">
-                            <h2 className="font-manrope text-3xl md:text-5xl text-center font-bold text-gray-900 ">Our team </h2>
+                            <h2 className="font-manrope text-3xl md:text-4xl text-center font-bold text-gray-900 ">Our team </h2>
                         </div>
                         <div className="grid grid-cols-1 min-[500px]:grid-cols-2 md:grid-cols-3 gap-8 md:gap-20 max-w-xl mx-auto md:max-w-3xl lg:max-w-full">
                                 <div className="group group md:col-span-2 lg:col-span-1">
