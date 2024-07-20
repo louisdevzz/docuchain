@@ -7,8 +7,10 @@ import {
     PaymasterMode,
 } from "@biconomy/account";
 import { connectWallet } from "@/utils/smartWallet";
-import { MintNFT } from "@/utils/SDK";
+import ExcelJS from "exceljs";
 import QRCode from 'qrcode';
+import { saveAs } from 'file-saver'
+import axios from "axios"
 
 
 export default function Apps(){
@@ -22,20 +24,58 @@ export default function Apps(){
     const [gradution,setGradution] = useState<string|null>(null);
     const [university,setUniversity] = useState<string|null>(null);
     const [smartAccountAddress,setSmartAccountAddress] = useState<string|null>(null)
-
+    const [listIMG, setListIMG] = useState<any>([]);
+    const [listArrayBuffer,setListArrayBuffer] = useState<any>([])
+    const [listData, setListData] = useState<any>(null)
+    
     useEffect(()=>{
         setSmartAccountAddress(localStorage.getItem("smartAccountAddress"))
     },[smartAccountAddress])
-
-    const uploadFile = (event:any)=>{
+    const uploadFile = async(event:any)=>{
         if(event.target.files[0]){
-            setFile(event.target.files[0])
+            const workbook = new ExcelJS.Workbook();
+            await workbook.xlsx.load(event.target.files[0]);
+
+            const worksheet = workbook.worksheets[0];
+            // const listImage:any = [];
+            // for (const image of worksheet.getImages()) {
+            //     console.log('processing image row', image.range.tl.nativeRow, 'col', image.range.tl.nativeCol, 'imageId', image.imageId);
+            //     // fetch the media item with the data (it seems the imageId matches up with m.index?)
+            //     const img = workbook.model.media.find((m:any) => m.index === image.imageId);
+            //     //listImage.push(`data:image/png;base64,${(img?.buffer as Buffer).toString('base64')}`)
+            //     listImage.push(img?.buffer)
+            // }
+            const Name = worksheet.getColumn(1).values.slice(-(worksheet.getColumn(1).values.length-2));
+            const Birthday = worksheet.getColumn(2).values.slice(-(worksheet.getColumn(1).values.length-2));
+            const IDofStudent = worksheet.getColumn(3).values.slice(-(worksheet.getColumn(1).values.length-2));
+            const Major = worksheet.getColumn(4).values.slice(-(worksheet.getColumn(1).values.length-2));
+            const Gradution = worksheet.getColumn(5).values.slice(-(worksheet.getColumn(1).values.length-2));
+            const University = worksheet.getColumn(6).values.slice(-(worksheet.getColumn(1).values.length-2));
+            const Image = worksheet.getImages();
+            const listData:any = []
+            for (let i =0;i<Name.length;i++){
+                listData.push({
+                    FullName: Name[i],
+                    IDofStudent: IDofStudent[i],
+                    BirthDay: Birthday[i],
+                    Major: Major[i],
+                    Gradution: Gradution[i],
+                    University: University[i],
+                    Certificate: (workbook.model.media.find((m:any) => m.index === Image[i].imageId))?.buffer
+                })
+            }
+            setListData(listData)
+            //console.log(worksheet.getColumn(1).values.slice(-(worksheet.getColumn(1).values.length-2)))
+            //console.log(listImage)
+            //setListIMG(listImage)
+            //setListArrayBuffer(listImage)
+            //setFile(event.target.files[0])
             //setImage(URL.createObjectURL(event.target.files[0]))
         }else{
             toast("Trouble uploading file");
         }
     }
-
+    //console.log(listData)
     const clear = () =>{
         setCid(null)
         setName('')
@@ -47,29 +87,36 @@ export default function Apps(){
     }
 
     const Sumbit = async()=>{
-        if(name&&birthDay&&major&&gradution){
+        if(listData.length > 0){
             try {
                 const toastId = toast("Submit Pending",{autoClose:false});
                 const data = new FormData();
-                data.set("file", file as File);
-                data.append("metadata", JSON.stringify(
-                    { 
-                        name: name
-                    }
-                ));
-                const res = await fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
-                    method: "POST",
-                    headers: {
-                        Authorization: `Bearer ${process.env.JWT_PINATA_CLOUD}`,
-                    },
-                    body: data,
+                const listIpfsCid: string[] = [];
+                for(let i =0; i< listData.length;i++){
+                    const blob = new Blob([listData[i].Certificate]);
+                    const file = new File([blob], "file")
+                    data.set("file", file as File);
+                    data.append("metadata", JSON.stringify(
+                        { 
+                            name: name
+                        }
+                    ));
+                    const res = await fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
+                        method: "POST",
+                        headers: {
+                            Authorization: `Bearer ${process.env.JWT_PINATA_CLOUD}`,
+                        },
+                        body: data,
+                    });
+                    const { IpfsHash } = await res.json();
+                    listIpfsCid.push(IpfsHash);
+                }
+                console.log(listIpfsCid)
+                toast.update(toastId, {
+                    render: "Upload Information Successfull",
+                    type: "success",
                 });
-                const { IpfsHash } = await res.json();
-                console.log("IpfsHash",IpfsHash)
-                // toast.update(toastId, {
-                //     render: "Upload Information Successfull",
-                //     type: "success",
-                // });
+                
                 // const transaction = await MintNFT({
                 //     smartAccountAddress: smartAccountAddress as string,
                 //     ipfs_cid: IpfsHash
@@ -78,7 +125,7 @@ export default function Apps(){
                 //     render: "Mint NFT successfull",
                 //     type: "success",
                 // });
-                const contractAddress = "0xf0873E7C54212f0c94755A103aDb2139a6786314";
+                const contractAddress = "0x32b61E0748a433F07171f48F8f18C8C0Bd1DA382";
                 const provider = new ethers.providers.JsonRpcProvider(
                     "https://eth-sepolia.public.blastapi.io"
                 );
@@ -88,33 +135,52 @@ export default function Apps(){
                     ABI,
                     provider
                 );
-                const minTx = await contractInstance.populateTransaction.registerKYC(idStudent,name,IpfsHash,birthDay,major,gradution,"",university,true);
-                console.log("Mint Tx", minTx.data);
-                const tx1 = {
-                    to: contractAddress,
-                    data: minTx.data,
-                };
+                const listTransaction:any = [];
+                for(let i=0;i<listData.length;i++){
+                    //console.log("listData[i].IDofStudent",listData[i].IDofStudent)
+                    const minTx = await contractInstance.populateTransaction.registerKYC(smartAccountAddress,Number(listData[i].IDofStudent).toString(),listData[i].FullName,listIpfsCid[i],new Date(listData[i].BirthDay).toLocaleDateString("es"),listData[i].Major,Number(listData[i].Gradution).toString(),"",listData[i].University,true);
+                    console.log("Mint Tx", minTx.data);
+                    const tx = {
+                        to: contractAddress,
+                        data: minTx.data,
+                    };
+                    listTransaction.push(tx)
+                }
+                
+                console.log(listTransaction)
+
                 toast.update(toastId, {
                     render: "Sending Transaction",
                     autoClose: false,
                 });
                 const smartAccount = await connectWallet();
                 //@ts-ignore
-                
-                const userOpResponse = await smartAccount?.sendTransaction(tx1, {
+                const userOpResponse = await smartAccount?.sendTransaction(listTransaction, {
                     paymasterServiceData: { mode: PaymasterMode.SPONSORED },
                 });
                 //@ts-ignore
                 const { transactionHash } = await userOpResponse.waitForTxHash();
                 //console.log("Transaction Hash", transactionHash);
                 if (transactionHash) {
-                    QRCode.toDataURL(idStudent as string,{ errorCorrectionLevel: 'H' ,width: 800})
-                    .then(url => {
-                        setImage(url)
+                    const listUrl: string[] = [];
+                for(let i=0; i<listData.length;i++){
+                    //console.log("listData[i].IDofStudent",listData[i].IDofStudent)
+                    const encode = await axios.post("/api/encode",{
+                        "idofStudent":`${listData[i].IDofStudent}`
+                    },{
+                        headers:{
+                            "Content-Type":"application/json"
+                        }
                     })
-                    .catch(err => {
-                        console.error(err)
-                    })
+                    QRCode.toDataURL(encode.data,{ errorCorrectionLevel: 'H' ,width: 800})
+                        .then(url => {
+                            listUrl.push(url)
+                        })
+                    }
+                    setListIMG(listUrl)
+                    // .catch(err => {
+                    //     console.error(err)
+                    // })
                     clear()
                     toast.update(toastId, {
                     render: "Transaction Successful",
@@ -123,7 +189,12 @@ export default function Apps(){
                     });
                     console.log("transactionHash",transactionHash);
                 }
-                
+                const userOpReceipt = await userOpResponse.wait();
+                console.log("userOpReceipt",userOpReceipt)
+                if (userOpReceipt.success == "true") {
+                    console.log("UserOp receipt", userOpReceipt);
+                    console.log("Transaction receipt", userOpReceipt.receipt);
+                }
             } catch (e) {
                 console.log(e);
                 toast("Error!");
@@ -134,19 +205,15 @@ export default function Apps(){
         }
     }
 
-
-    // const upload = () => {
-    //     QRCode.toDataURL(idStudent as string,{ errorCorrectionLevel: 'H' ,width: 800})
-    //     .then(url => {
-    //         setImage(url)
-    //     })
-    //     .catch(err => {
-    //         console.error(err)
-    //     })
-
-    // }
+    const downloadAllQR = () =>{
+        for(let i =0;i<listIMG.length;i++){
+            saveAs(listIMG[i], `image_${listData[i].FullName}.jpg`)
+        }
+    }
+    
+    //console.log(new Date("Wed Oct 13 2004 07:00:00 GMT+0700 (Indochina Time)").toLocaleDateString("es"))
     return(
-        <div className="mt-10 flex flex-row w-full px-6 gap-10 justify-between items-center">
+        <div className="mt-10 flex flex-row w-full px-6 gap-10 justify-between ">
             <div className="px-10 w-full">
                 <h1 className="font-semibold text-2xl">Upload Certificate</h1>
                 <div className="flex flex-col md:flex-row w-full justify-between ">
@@ -166,6 +233,7 @@ export default function Apps(){
                                 </label>
                             </div>
                         </div>
+                        
                         <div className="mt-2 flex flex-col gap-2">
                             <label htmlFor="nameStudent">Full Name student</label>
                             <input name="nameStudent" onChange={(e)=>setName(e.target.value)} type="text"  className="border border-gray-300 px-3 py-2 rounded-lg"/>
@@ -196,20 +264,20 @@ export default function Apps(){
                             </button>
                         </div>
                     </div>
-                    {image&&(
-                        <div className="flex flex-col w-[600px] h-[400px] justify-center items-center mt-20">
+                    {listIMG.length > 0 &&(
+                        <div className="flex flex-col w-[600px] h-[400px] justify-center items-center -mt-10">
                             <p className="text-center text-2xl font-semibold">Your QR Code</p>
-                            <div className="border border-gray-300 p-4 mt-10 rounded-md shadow-lg">
-                                {image?(
-                                    <img width={200} className="w-[400px] justify-center h-[400px] rounded-md" src={image} alt="qr_code" />
-                                ):(
-                                    <img width={200} className="w-[400px] justify-center h-[400px] rounded-md" src="https://www.qrgpt.io/_next/image?url=https%3A%2F%2Fg4yqcv8qdhf169fk.public.blob.vercel-storage.com%2F6BhfNzx-TmxVWNhp6UBEOT11nZX2cjYZLx6m6E.png&w=640&q=75" alt="qr_code" />
-                                )}
+                            <div className="flex flex-row gap-5 mt-10 w-full justify-center items-center">
+                                {listIMG.map((url:string,idx:number)=>(
+                                    <div key={idx} className="border border-gray-300 p-4  rounded-md shadow-lg">
+                                        <img width={200} className="w-[200px] justify-center h-[200px] rounded-md" src={url} alt="qr_code" />
+                                    </div>
+                                ))}
                             </div>
                             <div className="flex flex-row gap-10 mt-5">
-                                <a href={image as string} download="QR_code" className="px-4 cursor-pointer py-2 bg-black text-[#fff] rounded-md hover:bg-opacity-75">
+                                <button onClick={downloadAllQR} className="px-4 cursor-pointer py-2 bg-black text-[#fff] rounded-md hover:bg-opacity-75">
                                     <span>Download</span>
-                                </a>
+                                </button>
                                 <button className="px-4 py-2 border border-gray-300 rounded-md hover:bg-opacity-75">
                                     <span>Share</span>
                                 </button>

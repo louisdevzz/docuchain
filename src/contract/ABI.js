@@ -1,6 +1,30 @@
 //0xf0873E7C54212f0c94755A103aDb2139a6786314
 export const ABI = [
 	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_ethAdmin",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "_name",
+				"type": "string"
+			}
+		],
+		"name": "addAdmin",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"stateMutability": "nonpayable",
 		"type": "constructor"
@@ -57,82 +81,12 @@ export const ABI = [
 		"type": "event"
 	},
 	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "idStudent",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "bool",
-				"name": "kycStatus",
-				"type": "bool"
-			}
-		],
-		"name": "studentAdded",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "idStudent",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "bool",
-				"name": "kycStatus",
-				"type": "bool"
-			}
-		],
-		"name": "studentUpdated",
-		"type": "event"
-	},
-	{
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "_ethAdmin",
+				"name": "_ethAddress",
 				"type": "address"
 			},
-			{
-				"internalType": "string",
-				"name": "_name",
-				"type": "string"
-			}
-		],
-		"name": "addAdmin",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "admin",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
 			{
 				"internalType": "string",
 				"name": "_idStudent",
@@ -215,6 +169,11 @@ export const ABI = [
 				"internalType": "string",
 				"name": "_idStudent",
 				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "_ethAddress",
+				"type": "address"
 			}
 		],
 		"name": "removeKYC",
@@ -229,7 +188,50 @@ export const ABI = [
 		"type": "function"
 	},
 	{
+		"anonymous": false,
 		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "idStudent",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "bool",
+				"name": "kycStatus",
+				"type": "bool"
+			}
+		],
+		"name": "studentAdded",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "idStudent",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "bool",
+				"name": "kycStatus",
+				"type": "bool"
+			}
+		],
+		"name": "studentUpdated",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_ethAddress",
+				"type": "address"
+			},
 			{
 				"internalType": "string",
 				"name": "_idStudent",
@@ -285,6 +287,38 @@ export const ABI = [
 			}
 		],
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "admin",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_ethAdmin",
+				"type": "address"
+			}
+		],
+		"name": "checkAdmin",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{

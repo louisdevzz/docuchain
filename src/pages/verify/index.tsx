@@ -2,6 +2,7 @@ import { useState,useEffect } from "react";
 import QrScanner from "qr-scanner"
 import { ethers } from "ethers";
 import { ABI } from "@/contract/ABI";
+import axios from "axios";
 
 const Verify = () =>{
     const [allNFTs, setAllNFTs] = useState<any>([]);
@@ -16,16 +17,25 @@ const Verify = () =>{
     const handleUpload = (event:any) =>{
         const img = event.target.files[0];
         if(img){
-            console.log(img)
+            //console.log(img)
             QrScanner.scanImage(img, { returnDetailedScanResult: true })
-            .then(result => setResult(result.data))
+            .then(async(result )=>{
+                const decode = await axios.post("/api/decode",{
+                    "token":result.data
+                },{
+                    headers:{
+                        "Content-Type":"application/json"
+                    }
+                })
+                //console.log("decode",decode.data)
+                setResult(decode.data)
+            })
             .catch(e => console.log("err",e));
             setImage(URL.createObjectURL(img))
         }
     }
-
     const verifyKYC = async()=>{
-        const contractAddress = "0xf0873E7C54212f0c94755A103aDb2139a6786314";
+        const contractAddress = "0x32b61E0748a433F07171f48F8f18C8C0Bd1DA382";
         const provider = new ethers.providers.JsonRpcProvider(
             "https://eth-sepolia.public.blastapi.io"
         );
@@ -37,7 +47,7 @@ const Verify = () =>{
         );
         try{
             const data = await contractInstance.viewKYC(result);
-            console.log("data",data)
+            //console.log("data",data)
             if(data){
                 const nft = {
                     status: data[0],
