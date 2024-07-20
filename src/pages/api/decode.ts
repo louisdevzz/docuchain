@@ -7,7 +7,7 @@ export default function handler(
 ) {
     if(req.method == "POST"){
         const { token } = req.body;
-        const data = JWT.verify(token,'blockcertify')
+        const data = JWT.verify(token,process.env.JWT_TOKEN as string)
         res.status(200).json(data);
     }
 }

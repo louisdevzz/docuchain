@@ -7,7 +7,7 @@ export default function handler(
 ) {
   if(req.method == "POST"){
     const { idofStudent } = req.body;
-    const data = JWT.sign(idofStudent as string,'blockcertify')
+    const data = JWT.sign(idofStudent as string,process.env.JWT_TOKEN as string)
     res.status(200).json(data);
   }
 }
