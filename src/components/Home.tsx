@@ -11,7 +11,7 @@ import { contractABI } from "@/contract/contractABI";
 import { ABI } from "@/contract/ABI";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { encode } from "punycode";
+
 
 export default function Home() {
   const [smartAccount, setSmartAccount] =

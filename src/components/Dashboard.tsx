@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { CardBody, CardContainer, CardItem } from "@/components/ui/3DCard";
 import { ethers } from "ethers";
 import { ABI } from "@/contract/ABI";
 import { FaGithub } from "react-icons/fa";
@@ -8,18 +7,18 @@ import Footer from "./Footer";
 
 
 export default function Dashboard(){
-    const [allNFTs, setAllNFTs] = useState<any>([]);
     const [smartAccountAddress,setSmartAccountAddress] = useState<string|null>(null)
+    const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
     useEffect(()=>{
         setSmartAccountAddress(localStorage.getItem("smartAccountAddress"))
         if(smartAccountAddress){
-            loadKYC()
+            checkAdmin()
         }
     },[smartAccountAddress])
 
-    const loadKYC = async()=>{
-        const contractAddress = "0x9d69b7d8A1B9A1Be84c59ef2866820De334E76FD";
+    const checkAdmin = async()=>{
+        const contractAddress = "0x32b61E0748a433F07171f48F8f18C8C0Bd1DA382";
         const provider = new ethers.providers.JsonRpcProvider(
             "https://eth-sepolia.public.blastapi.io"
         );
@@ -30,17 +29,8 @@ export default function Dashboard(){
             provider
         );
         try{
-            const data = await contractInstance.viewKYC(smartAccountAddress as string);
-            if(data){
-                const nft = {
-                    status: data[0],
-                    name: data[1],
-                    ipfs_cid: data[2],
-                    year: data[3],
-                    hash: data[4]
-                }
-                setAllNFTs(nft)
-            }
+            const data = await contractInstance.checkAdmin(smartAccountAddress as string);
+            setIsAdmin(data)
         }catch(error){
             console.log("error",error)
         }
@@ -63,9 +53,11 @@ export default function Dashboard(){
                             </div>
                         </div>
                         <div className="md:mt-10 mt-5 flex flex-col md:flex-row gap-5 md:gap-10 justify-start items-center">
-                            <Link href={"/app"} className="bg-black text-[#fff] px-5 py-2 rounded-lg shadow-sm hover:bg-opacity-75">
+                            {isAdmin&&(
+                                <Link href={"/app"} className="bg-black text-[#fff] px-5 py-2 rounded-lg shadow-sm hover:bg-opacity-75">
                                 <span>Upload Certificate</span>
-                            </Link>
+                                </Link>
+                            )}
                             <Link href={"/verify"} className="border border-gray-300 rounded-lg px-5 py-2 shadow-sm hover:bg-gray-100">
                                 <span>Verify Certificate</span>
                             </Link>

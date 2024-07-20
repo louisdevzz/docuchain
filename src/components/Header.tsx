@@ -86,6 +86,11 @@ export default function Header() {
     return str;
   }
 
+  const logout = () =>{
+    localStorage.removeItem("smartAccountAddress")
+    location.reload()
+  }
+
   return (
     <div className=" md:flex md:h-20  justify-center mx-auto border-b border-gray-200">
       <div className="w-full flex max-w-screen-xl md:px-5 px-3 py-2">
@@ -126,7 +131,7 @@ export default function Header() {
                   
                   <div className={`${isShow?"visible":"invisible"} absolute px-2 py-3 top-10 shadow-md rounded-md border border-gray-100 w-40 right-0 md:left-0  bg-white`}>
                     <div className="mt-2 flex flex-col gap-3">
-                      <button className="hover:border-r-2 hover:bg-gray-100 py-1 bg-opacity-90 border-gray-200 pr-16 pl-2">Log out</button>
+                      <button onClick={logout} className="hover:border-r-2 hover:bg-gray-100 py-1 bg-opacity-90 border-gray-200 pr-16 pl-2">Log out</button>
                       <button className="hover:border-r-2 hover:bg-gray-100 py-1 bg-opacity-90 border-gray-200 pr-16 pl-2">Profile</button>
                     </div>
                   </div>
