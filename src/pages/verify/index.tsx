@@ -3,17 +3,43 @@ import QrScanner from "qr-scanner"
 import { ethers } from "ethers";
 import { ABI } from "@/contract/ABI";
 import axios from "axios";
+const QrReader =require('react-qr-scanner');
+import dynamic from 'next/dynamic'
+
 
 const Verify = () =>{
     const [allNFTs, setAllNFTs] = useState<any>([]);
     const [smartAccountAddress,setSmartAccountAddress] = useState<string|null>(null)
     const [image, setImage] = useState<string|null>(null);
     const [result,setResult] = useState<string|null>(null);
+    const [component, setComponent] = useState<any>(null);
+    const [isShow, setIsShow] = useState<boolean>(false);
 
     useEffect(()=>{
         setSmartAccountAddress(localStorage.getItem("smartAccountAddress"))
+        setComponent(<QrReader
+            delay={500}
+            style={{
+                height: 240,
+                width: 320,
+            }}
+            onError={(error:any)=>console.error(error)}
+            onScan={async(result:any)=>{
+                if(result){
+                    const decode = await axios.post("/api/decode",{
+                        "token":result.text
+                    },{
+                        headers:{
+                            "Content-Type":"application/json"
+                        }
+                    })
+                    //setResult(decode.data)
+                    loadKYC(decode.data)
+                    setIsShow(false)
+                }
+            }}/>)
     },[smartAccountAddress])
-
+    console.log(result)
     const handleUpload = (event:any) =>{
         const img = event.target.files[0];
         if(img){
@@ -32,6 +58,37 @@ const Verify = () =>{
             })
             .catch(e => console.log("err",e));
             setImage(URL.createObjectURL(img))
+        }
+    }
+    
+    const loadKYC = async(result:string)=>{
+        const contractAddress = "0x32b61E0748a433F07171f48F8f18C8C0Bd1DA382";
+        const provider = new ethers.providers.JsonRpcProvider(
+            "https://eth-sepolia.public.blastapi.io"
+        );
+        
+        const contractInstance = new ethers.Contract(
+            contractAddress as string,
+            ABI,
+            provider
+        );
+        try{
+            const data = await contractInstance.viewKYC(result);
+            //console.log("data",data)
+            if(data){
+                const nft = {
+                    status: data[0],
+                    name: data[1],
+                    ipfs_cid: data[2],
+                    birthDay: data[3],
+                    major: data[4],
+                    gradution: data[5],
+                    university: data[6]
+                }
+                setAllNFTs(nft)
+            }
+        }catch(error){
+            console.log("error",error)
         }
     }
     const verifyKYC = async()=>{
@@ -65,37 +122,51 @@ const Verify = () =>{
         }
     }
     return(
+        
         <div className="mt-10 flex flex-row w-full px-6 gap-10 justify-between items-center">
             <div className="md:px-10 px-2 w-full">
                 <h1 className="font-semibold text-2xl">Verify Certificate</h1>
                 <div className="flex flex-col gap-20 md:flex-row justify-between md:gap-20">
                     <div className="mt-5">
-                        {
-                            image?(
-                                <img width={400} src={image} alt="qr_code" />
-                            ):(
-                                <div className="mt-2">
-                                    <label htmlFor="qr">QR of Certificate</label>
-                                    <div className="flex cursor-pointer items-center space-x-6 border border-gray-300 rounded-lg mt-2 w-full md:w-[400px] focus:border-black">
-                                        <label className="block cursor-pointer">
-                                            <input onChange={handleUpload} type="file" className="block w-full text-sm text-slate-500 file:cursor-pointer
-                                                file:mr-4 file:py-2 file:px-4
-                                                file:border-0
-                                                file:rounded-l-lg
-                                                file:text-sm file:font-semibold
-                                                file:bg-gray-50 file:text-black
-                                                hover:file:bg-gray-100
-                                            "/>
-                                        </label>
+                        {!isShow&&
+                            (
+                                image?(
+                                    <img width={400} src={image} alt="qr_code" />
+                                ):(
+                                    <div className="mt-2">
+                                        <label htmlFor="qr">QR of Certificate</label>
+                                        <div className="flex cursor-pointer items-center space-x-6 border border-gray-300 rounded-lg mt-2 w-full md:w-[400px] focus:border-black">
+                                            <label className="block cursor-pointer">
+                                                <input onChange={handleUpload} type="file" className="block w-full text-sm text-slate-500 file:cursor-pointer
+                                                    file:mr-4 file:py-2 file:px-4
+                                                    file:border-0
+                                                    file:rounded-l-lg
+                                                    file:text-sm file:font-semibold
+                                                    file:bg-gray-50 file:text-black
+                                                    hover:file:bg-gray-100
+                                                "/>
+                                            </label>
+                                        </div>
                                     </div>
-                                </div>
+                                )
                             )
                         }
+                        {isShow&&(
+                            <div className="mt-10">
+                                {component}
+                            </div>
+                        )}
                         <div className="mt-5 flex justify-center">
-                            <button onClick={verifyKYC} className="md:w-[250px] w-[200px] px-4 py-2 bg-black text-[#fff] rounded-lg hover:bg-opacity-75">
-                                <span className="font-semibold">Verify</span>
+                            <button onClick={()=>setIsShow((prv)=>!prv)} className="md:w-[250px] w-[200px] px-4 py-2 bg-black text-[#fff] rounded-lg hover:bg-opacity-75">
+                                <span className="font-semibold">Verify by Camera</span>
                             </button>
                         </div>
+                        <div className="mt-5 flex justify-center">
+                            <button onClick={verifyKYC} className="md:w-[250px] w-[200px] px-4 py-2 bg-black text-[#fff] rounded-lg hover:bg-opacity-75">
+                                <span className="font-semibold">Verify by File</span>
+                            </button>
+                        </div>
+
                     </div>
                     {Object.values(allNFTs).length > 0 &&(
                         <div className="-mt-8 w-full justify-center flex pb-5">
