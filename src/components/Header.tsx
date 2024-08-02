@@ -6,6 +6,7 @@ import {
 import { ethers } from "ethers";
 import { Web3Auth } from "@web3auth/modal";
 import { CHAIN_NAMESPACES } from "@web3auth/base";
+import { ABI } from "@/contract/ABI";
 
 export default function Header() {
   const [smartAccountAddress, setSmartAccountAddress] = useState<string | null>(
@@ -13,6 +14,7 @@ export default function Header() {
   );
   const [isShow,setIsShow] = useState<boolean>(false);
   const [isHidden,setIsHidden] = useState<boolean>(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   useEffect(()=>{
     setSmartAccountAddress(localStorage.getItem("smartAccountAddress"))
@@ -79,6 +81,34 @@ export default function Header() {
     }
   };
 
+ 
+
+    useEffect(()=>{
+        setSmartAccountAddress(localStorage.getItem("smartAccountAddress"))
+        if(smartAccountAddress){
+            checkAdmin()
+        }
+    },[smartAccountAddress])
+
+  const checkAdmin = async()=>{
+      const contractAddress = "0x32b61E0748a433F07171f48F8f18C8C0Bd1DA382";
+      const provider = new ethers.providers.JsonRpcProvider(
+          "https://eth-sepolia.public.blastapi.io"
+      );
+      
+      const contractInstance = new ethers.Contract(
+          contractAddress as string,
+          ABI,
+          provider
+      );
+      try{
+          const data = await contractInstance.checkAdmin(smartAccountAddress as string);
+          setIsAdmin(data)
+      }catch(error){
+          console.log("error",error)
+      }
+  }
+
   const truncate = (str:string) =>{
     if(str && str.length > 30){
       return str.slice(0,5)+'...'+str.slice(-5);
@@ -107,11 +137,15 @@ export default function Header() {
                   <span>Home</span>
                 </Link>
               </li>
-              <li>
-                <Link href={"/app"}>
-                  <span>Apps</span>
-                </Link>
-              </li>
+              {
+                isAdmin&&(
+                  <li>
+                    <Link href={"/app"}>
+                      <span>Apps</span>
+                    </Link>
+                  </li>
+                )
+              }
               <li>
                 <Link href={"/verify"}>
                   <span>Verify</span>
