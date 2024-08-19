@@ -134,14 +134,14 @@ export default function Header() {
             <ul className="hidden md:flex flex-row justify-between items-center gap-10">
               <li>
                 <Link href={"/"}>
-                  <span>Home</span>
+                  <span>Trang chủ</span>
                 </Link>
               </li>
               {
                 isAdmin&&(
                   <li>
                     <Link href={"/app"}>
-                      <span>Apps</span>
+                      <span>Tải tài liệu</span>
                     </Link>
                   </li>
                 )
@@ -151,7 +151,7 @@ export default function Header() {
                   <span>Verify</span>
                 </Link>
               </li> */}
-              <li>Contact</li>
+              <li>Liên hệ</li>
             </ul>
             
             <div className="flex flex-row gap-5">
