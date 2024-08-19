@@ -1,4 +1,4 @@
-## BlockCertfy
+## Docuchain
 
 First, run the development server:
 

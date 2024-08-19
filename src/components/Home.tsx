@@ -32,15 +32,7 @@ export default function Home() {
       uniCertNFT: "0x53191dB16a946E5aC8205Dd1a49528730b92b5c0",
       biconomyPaymasterApiKey: "pg90HOfS1.2b0110e8-eed6-41b3-a3c6-efc4742f148c",
       explorerUrl: "https://sepolia.etherscan.io/tx/",
-    },
-    {
-      chainId: 80002,
-      name: "Polygon Amoy",
-      providerUrl: "https://rpc-amoy.polygon.technology/",
-      incrementCountContractAdd: "0xfeec89eC2afD503FF359487967D02285f7DaA9aD",
-      biconomyPaymasterApiKey: "TVDdBH-yz.5040805f-d795-4078-9fd1-b668b8817642",
-      explorerUrl: "https://www.oklink.com/amoy/tx/",
-    },
+    }
   ];
 
   const connect = async () => {

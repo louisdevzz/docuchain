@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
-import { ABI } from "@/contract/ABI";
 import { FaGithub } from "react-icons/fa";
 import Link from "next/link";
 import Footer from "./Footer";
+import {docuchain}  from "@/contract/docuchainABI"
 
 
 export default function Dashboard(){
@@ -18,14 +18,14 @@ export default function Dashboard(){
     },[smartAccountAddress])
 
     const checkAdmin = async()=>{
-        const contractAddress = "0x32b61E0748a433F07171f48F8f18C8C0Bd1DA382";
+        const contractAddress = "0x31bfde6Ff35DCBe3f71477fAb4a639F4d4F961ef";
         const provider = new ethers.providers.JsonRpcProvider(
             "https://eth-sepolia.public.blastapi.io"
         );
         
         const contractInstance = new ethers.Contract(
             contractAddress as string,
-            ABI,
+            docuchain,
             provider
         );
         try{
@@ -70,7 +70,7 @@ export default function Dashboard(){
                     <div className="flex flex-col justify-center items-center ">
                         <h2 className="md:text-3xl text-2xl text-center font-semibold tracking-wider">BlockCertify is Proudly Open Source</h2>
                         <p className="mt-1 text-[#000000a6] text-sm md:text-base">Our source code is available on GitHub.</p>
-                        <Link target="_blank" href={"https://github.com/louisdevzz/UniCert"} className="mt-8 bg-black text-[#fff] flex flex-row gap-3 px-5 py-2 items-center rounded-lg">
+                        <Link target="_blank" href={"https://github.com/louisdevzz/docuchain"} className="mt-8 bg-black text-[#fff] flex flex-row gap-3 px-5 py-2 items-center rounded-lg">
                             <FaGithub />
                             <span>Star on Github</span>
                         </Link>

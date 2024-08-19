@@ -6,7 +6,7 @@ import {
 import { ethers } from "ethers";
 import { Web3Auth } from "@web3auth/modal";
 import { CHAIN_NAMESPACES } from "@web3auth/base";
-import { ABI } from "@/contract/ABI";
+import { docuchain } from "@/contract/docuchainABI";
 
 export default function Header() {
   const [smartAccountAddress, setSmartAccountAddress] = useState<string | null>(
@@ -91,14 +91,14 @@ export default function Header() {
     },[smartAccountAddress])
 
   const checkAdmin = async()=>{
-      const contractAddress = "0x32b61E0748a433F07171f48F8f18C8C0Bd1DA382";
+      const contractAddress = "0x31bfde6Ff35DCBe3f71477fAb4a639F4d4F961ef";
       const provider = new ethers.providers.JsonRpcProvider(
           "https://eth-sepolia.public.blastapi.io"
       );
       
       const contractInstance = new ethers.Contract(
           contractAddress as string,
-          ABI,
+          docuchain,
           provider
       );
       try{
@@ -127,8 +127,8 @@ export default function Header() {
         <div className="flex flex-row w-full justify-between items-center">
             <div>
               <Link href={"/"} className="flex flex-row gap-1 items-center">
-                <img width={20} height={20} className="md:w-12 md:h-12 h-10 w-10" src="/assets/logo.png" alt="logo" />
-                <span className="font-semibold text-2xl md:text-3xl">BlockCertify</span>
+                <img width={20} height={20} className="md:w-12 md:h-12 h-10 w-10" src="/assets/logo.svg" alt="logo" />
+                <span className="font-semibold text-2xl md:text-3xl">DocuChain</span>
               </Link>
             </div>
             <ul className="hidden md:flex flex-row justify-between items-center gap-10">
@@ -146,11 +146,11 @@ export default function Header() {
                   </li>
                 )
               }
-              <li>
+              {/* <li>
                 <Link href={"/verify"}>
                   <span>Verify</span>
                 </Link>
-              </li>
+              </li> */}
               <li>Contact</li>
             </ul>
             
@@ -191,9 +191,9 @@ export default function Header() {
                     <Link href={"/app"} onClick={()=>setIsHidden(false)}>
                       <span className="text-lg">Upload</span>
                     </Link>
-                    <Link href={"/verify"} onClick={()=>setIsHidden(false)}>
+                    {/* <Link href={"/verify"} onClick={()=>setIsHidden(false)}>
                       <span className="text-lg">Verify</span>
-                    </Link>
+                    </Link> */}
                     <Link href={"#"} onClick={()=>setIsHidden(false)}>
                       <span className="text-lg">Contact</span>
                     </Link>
