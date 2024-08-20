@@ -146,11 +146,11 @@ export default function Header() {
                   </li>
                 )
               }
-              {/* <li>
+              <li>
                 <Link href={"/verify"}>
-                  <span>Verify</span>
+                  <span>Xác minh</span>
                 </Link>
-              </li> */}
+              </li>
               <li>Liên hệ</li>
             </ul>
             

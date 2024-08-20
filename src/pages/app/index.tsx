@@ -93,7 +93,6 @@ export default function Apps(){
     }
     //console.log(listData)
     const clear = () =>{
-        setCid(null)
         setNameDocument('')
         setFile(undefined)
         setCreatorName('')
@@ -136,65 +135,13 @@ export default function Apps(){
             const { transactionHash } = await userOpResponse.waitForTxHash();
             //console.log("Transaction Hash", transactionHash);
             if (transactionHash) {
-                const encode = await axios.post("/api/encode",{
-                    "contentHash": contentHash
-                },{
-                    headers:{
-                        "Content-Type":"application/json"
-                    }
-                })
-                if(encode.data){
-                    QRCode.toDataURL(`${process.env.WEB_PATH}/view/${encode.data}`,{ errorCorrectionLevel: 'H' ,width: 800})
-                    .then(async(url) => {
-                        //console.log("qrcode",url)
-                        try {
-                            const filePdf = DataURIToBlob(url)
-                            const data = new FormData();
-                            data.append("file", filePdf);
-                            
-                            const upload = await fetch(
-                                "https://api.pinata.cloud/pinning/pinFileToIPFS",
-                                {
-                                    method: "POST",
-                                    headers: {
-                                    Authorization: `Bearer ${process.env.JWT_PINATA_CLOUD}`,
-                                    },
-                                    body: data,
-                                },
-                            );
-                            const qrCode = await upload.json();
-                            console.log("qrCode",qrCode.IpfsHash);
-                            const response = await axios.post("https://api.pdf.co/v1/pdf/edit/add",{
-                                async: false,
-                                inline: true,
-                                name: `${file?.name + " notarized"}`,
-                                url: `${gatewayUrl}/ipfs/${cid}?pinataGatewayToken=${process.env.TOKEN_PINATA}`,
-                                imagesString: `430;40;0-;${gatewayUrl}/ipfs/${qrCode.IpfsHash}?pinataGatewayToken=${process.env.TOKEN_PINATA};80;80`
-                            },{
-                            headers:{
-                                "Content-Type":"application/json",
-                                "x-api-key":"louisdevzz04@gmail.com_HZZRdikD5wLaVX4yWkKTzGNQk9eRBpNsrEbdXF1THCawJ7MVCa6xiy147WJ9GWqc"
-                            }
-                            })
-                            const pdfUrl =  response.data;
-                            setUrlPdf(pdfUrl.url)
-                            console.log("data",pdfUrl.url)
-                        } catch (error) {
-                        console.log(error);
-                        }
-                        
-                    })
-                    .catch(err => {
-                        console.error(err)
-                    })
-                    clear()
-                    toast.update(toastId, {
-                        render: "Transaction Successful",
-                        type: "success",
-                        autoClose: 5000,
-                    });
-                    console.log("transactionHash",transactionHash);
-                }
+                clear()
+                toast.update(toastId, {
+                    render: "Tải tài liệu thành công",
+                    type: "success",
+                    autoClose: 5000,
+                });
+                console.log("transactionHash",transactionHash);
             }
             const userOpReceipt = await userOpResponse.wait();
             console.log("userOpReceipt",userOpReceipt)
@@ -272,19 +219,6 @@ export default function Apps(){
                             </Worker>
                         </div>
                     )}
-                    {
-                        urlPdf&&(
-                            <div className="flex flex-col w-[600px] h-[600px] justify-center items-center ">
-                                <p className="text-center text-2xl font-semibold mb-10">Tải tài liệu thành công</p>
-                                <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
-                                    <Viewer
-                                    fileUrl={urlPdf}
-                                    plugins={[defaultLayoutPluginInstance]}
-                                    />
-                                </Worker>
-                            </div>
-                        )
-                    }
                 </div>
                 
             </div>
