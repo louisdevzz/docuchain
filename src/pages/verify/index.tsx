@@ -114,7 +114,7 @@ const Verify = () =>{
                                     inline: true,
                                     name: `${file?.name.replace(".pdf","-") + " đã xác minh"}`,
                                     url: `${gatewayUrl}/ipfs/${docs.ipfsDocs}?pinataGatewayToken=${process.env.TOKEN_PINATA}`,
-                                    imagesString: `430;40;0-;${gatewayUrl}/ipfs/${qrCode.IpfsHash}?pinataGatewayToken=${process.env.TOKEN_PINATA};80;80`
+                                    imagesString: `420;40;0-;${gatewayUrl}/ipfs/${qrCode.IpfsHash}?pinataGatewayToken=${process.env.TOKEN_PINATA};80;80`
                                 },{
                                 headers:{
                                     "Content-Type":"application/json",
